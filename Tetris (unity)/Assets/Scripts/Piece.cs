@@ -108,6 +108,7 @@ public class Piece : MonoBehaviour
     public void Lock()
     {
         this.board.Set(this);
+        this.board.ClearLines();
         this.board.SpawnPiece();
     }
 
@@ -140,11 +141,14 @@ public class Piece : MonoBehaviour
         if (!TestWall(this.rotat_index, direct))
         {
             this.rotat_index = orig_rotat;
+            ApplyMatrix(-direct);
         }
     }
 
     private void ApplyMatrix(int direct)
     {
+        float[] matrix = Data.RotationMatrix;
+
         for (int i = 0; i < this.cells.Length; i++)
         {
             Vector3 cell = this.cells[i];
@@ -157,12 +161,12 @@ public class Piece : MonoBehaviour
                 case Tetromino.O:
                     cell.x -= 0.5f;
                     cell.y -= 0.5f;
-                    x = Mathf.CeilToInt((cell.x * Data.RotationMatrix[0] * direct) + (cell.y * Data.RotationMatrix[1] * direct));
-                    y = Mathf.CeilToInt((cell.x * Data.RotationMatrix[2] * direct) + (cell.y * Data.RotationMatrix[3] * direct));
+                    x = Mathf.CeilToInt((cell.x * matrix[0] * direct) + (cell.y * matrix[1] * direct));
+                    y = Mathf.CeilToInt((cell.x * matrix[2] * direct) + (cell.y * matrix[3] * direct));
                     break;
                 default:
-                    x = Mathf.CeilToInt((cell.x * Data.RotationMatrix[0] * direct) + (cell.y * Data.RotationMatrix[1] * direct));
-                    y = Mathf.CeilToInt((cell.x * Data.RotationMatrix[2] * direct) + (cell.y * Data.RotationMatrix[3] * direct));
+                    x = Mathf.RoundToInt((cell.x * matrix[0] * direct) + (cell.y * matrix[1] * direct));
+                    y = Mathf.RoundToInt((cell.x * matrix[2] * direct) + (cell.y * matrix[3] * direct));
                     break;
             }
 
